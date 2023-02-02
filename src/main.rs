@@ -29,7 +29,6 @@ fn main() -> io::Result<()> {
     for line in lines {
         // read line to variable
         let inline = line.unwrap().trim().to_string();
-        println!("line: {:?}",inline);
         // check if line is bigger then 2000 characters and if so split it
         if (inline.len()+1) as u32 > args.count
         {
@@ -115,6 +114,7 @@ fn main() -> io::Result<()> {
             let mut f = File::create(format!("{}-{:0width$}.txt",args.prefix, counter,width = zeropad_length))?;
             f.write_all(contents.as_bytes())?;
         } else {
+            println!("-------------------------------");
             println!("{}",contents);
             println!("-------------------------------");
         }
