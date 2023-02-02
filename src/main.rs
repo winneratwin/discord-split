@@ -8,16 +8,16 @@ use clap::Parser;
 #[clap(author, version, about, long_about = None)]
 struct Cli {
    /// Number of characters to have in each segment.
-   #[clap(short, value_parser, default_value_t = 2000)]
-   count: u32,
+   #[clap(long, value_parser, default_value_t = 2000)]
+   split_at: u32,
 
    /// Default file prefix.
-   #[clap(short, value_parser, default_value = "discord-split")]
-   prefix: String,
+   #[clap(long, value_parser, default_value = "discord-split")]
+   file_prefix: String,
 
-   /// Print to console.
+   /// write to file
    #[clap(long, value_parser, default_value_t = false)]
-   console: bool,
+   write_to_file: bool,
 }
 
 fn main() -> io::Result<()> {
@@ -30,18 +30,18 @@ fn main() -> io::Result<()> {
         // read line to variable
         let inline = line.unwrap().trim().to_string();
         // check if line is bigger then 2000 characters and if so split it
-        if (inline.len()+1) as u32 > args.count
+        if (inline.len()+1) as u32 > args.split_at
         {
             let res:Vec<&str> = inline.split(' ').collect();
             for x in res {
                 // check if the "word" is longer then the length it is going to be split into
-                if x.len() as u32 > args.count
+                if x.len() as u32 > args.split_at
                 {
                     // seperate into length chunks
-                    let result = sub_strings(x, args.count as usize);
+                    let result = sub_strings(x, args.split_at as usize);
                     for x in result {
                         //if the buffer + word is longer then the split number 
-                        if (buffer.len() + x.len()) as u32 > args.count
+                        if (buffer.len() + x.len()) as u32 > args.split_at
                         {
                             buffer = buffer.trim().to_string();
                             buffer.push('\n');
@@ -60,7 +60,7 @@ fn main() -> io::Result<()> {
                     }
                 }
                 //if the buffer + word is longer then the split number 
-                if (buffer.len() + x.len()) as u32 > args.count
+                if (buffer.len() + x.len()) as u32 > args.split_at
                 {
                     buffer=buffer.trim().to_string();
                     buffer.push('\n');
@@ -84,7 +84,7 @@ fn main() -> io::Result<()> {
         }
         // check if buffer + current line would be bigger then 2000 characters (discord without
         // nitros limit
-        if (buffer.len() + inline.len()) as u32 > args.count
+        if (buffer.len() + inline.len()) as u32 > args.split_at
         {
             buffer=buffer.trim().to_string();
             buffer.push('\n');
@@ -109,9 +109,9 @@ fn main() -> io::Result<()> {
     for contents in results
     {
         counter += 1;
-        if !args.console
+        if args.write_to_file
         {
-            let mut f = File::create(format!("{}-{:0width$}.txt",args.prefix, counter,width = zeropad_length))?;
+            let mut f = File::create(format!("{}-{:0width$}.txt",args.file_prefix, counter,width = zeropad_length))?;
             f.write_all(contents.as_bytes())?;
         } else {
             println!("-------------------------------");
