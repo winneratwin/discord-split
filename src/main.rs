@@ -47,7 +47,6 @@ fn main() -> io::Result<()> {
                             buffer.push('\n');
                             results.push(buffer);
                             buffer = x.to_owned();
-                            println!("{:?}",buffer);
                         } else { // if buffer+word is less then split number just add it
                             if !first_word {
                                 buffer.push(' ');
@@ -68,14 +67,12 @@ fn main() -> io::Result<()> {
                     first_word=false;
                     buffer = x.to_owned();
                 } else { // if buffer+word is less then split number just add it
-                    println!("{:?}",buffer);
                     if !first_word {
                         buffer.push(' ');
                     } else {
                         first_word=false;
                     }
                     buffer.push_str(x);
-                    println!("{:?}",buffer);
                 }
             }
             buffer.push('\n');
